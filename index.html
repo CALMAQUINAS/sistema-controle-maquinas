@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="todo-app">
+            <h1>Minha Lista de Tarefas</h1>
+            
+            <div class="input-section">
+                <input 
+                    type="text" 
+                    id="taskInput" 
+                    placeholder="Adicione uma nova tarefa..." 
+                    autocomplete="off"
+                >
+                <button id="addBtn" class="add-btn">Adicionar</button>
+            </div>
+
+            <div class="filter-section">
+                <button class="filter-btn active" data-filter="todos">Todas</button>
+                <button class="filter-btn" data-filter="ativas">Ativas</button>
+                <button class="filter-btn" data-filter="concluidas">Concluídas</button>
+            </div>
+
+            <ul id="taskList" class="task-list"></ul>
+
+            <div class="stats">
+                <span id="taskCount">0 tarefas pendentes</span>
+                <button id="clearBtn" class="clear-btn">Limpar Concluídas</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
