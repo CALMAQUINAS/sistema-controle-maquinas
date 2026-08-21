@@ -3,37 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List</title>
+    <title>Sistema de Controle de Estoque - Locação de Equipamentos</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <div class="todo-app">
-            <h1>Minha Lista de Tarefas</h1>
-            
-            <div class="input-section">
-                <input 
-                    type="text" 
-                    id="taskInput" 
-                    placeholder="Adicione uma nova tarefa..." 
-                    autocomplete="off"
-                >
-                <button id="addBtn" class="add-btn">Adicionar</button>
+        <!-- Header -->
+        <header class="header">
+            <h1>🏭 Sistema de Controle de Estoque</h1>
+            <p>Locação de Máquinas e Equipamentos</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="nav-btn active" data-tab="dashboard">📊 Dashboard</button>
+            <button class="nav-btn" data-tab="equipamentos">🔧 Equipamentos</button>
+            <button class="nav-btn" data-tab="locacoes">📦 Locações</button>
+            <button class="nav-btn" data-tab="historico">📜 Histórico</button>
+            <button class="nav-btn" data-tab="manutencao">🔨 Manutenção</button>
+        </nav>
+
+        <!-- Dashboard -->
+        <section id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <p>Total em Estoque</p>
+                        <h3 id="totalEstoque">0</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <p>Disponíveis</p>
+                        <h3 id="disponivel" style="color: #4caf50;">0</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🚚</div>
+                    <div class="stat-info">
+                        <p>Alugados</p>
+                        <h3 id="alugados" style="color: #ff9800;">0</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔧</div>
+                    <div class="stat-info">
+                        <p>Em Manutenção</p>
+                        <h3 id="manutencao-count" style="color: #f44336;">0</h3>
+                    </div>
+                </div>
             </div>
 
-            <div class="filter-section">
-                <button class="filter-btn active" data-filter="todos">Todas</button>
-                <button class="filter-btn" data-filter="ativas">Ativas</button>
-                <button class="filter-btn" data-filter="concluidas">Concluídas</button>
+            <div class="dashboard-section">
+                <h2>📋 Últimas Locações</h2>
+                <div id="ultimasLocacoes" class="locacoes-list"></div>
             </div>
 
-            <ul id="taskList" class="task-list"></ul>
-
-            <div class="stats">
-                <span id="taskCount">0 tarefas pendentes</span>
-                <button id="clearBtn" class="clear-btn">Limpar Concluídas</button>
+            <div class="dashboard-section">
+                <h2>⚠️ Alertas de Devolução</h2>
+                <div id="alertasDevorcao" class="alertas-list"></div>
             </div>
-        </div>
+        </section>
+
+        <!-- Equipamentos -->
+        <section id="equipamentos" class="tab-content">
+            <div class="section-header">
+                <h2>🔧 Gerenciar Equipamentos</h2>
+                <button id="novoEquipBtn" class="btn btn-primary">+ Novo Equipamento</button>
+            </div>
+
+            <!-- Form Novo Equipamento -->
+            <form id="formEquipamento" class="form-modal hidden">
+                <div class="form-group">
+                    <label>Nome do Equipamento *</label>
+                    <input type="text" id="equipNome" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Modelo</label>
+                        <input type="text" id="equipModelo">
+                    </div>
+                    <div class="form-group">
+                        <label>Série/Código</label>
+                        <input type="text" id="equipSerie">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Quantidade *</label>
+                        <input type="number" id="equipQuantidade" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Valor Diária (R$)</label>
+                        <input type="number" id="equipValor" step="0.01" min="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="equipDescricao" rows="3"></textarea>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('formEquipamento').classList.add('hidden')">Cancelar</button>
+                </div>
+            </form>
+
+            <!-- Lista de Equipamentos -->
+            <div id="equipamentosList" class="equipamentos-list"></div>
+        </section>
+
+        <!-- Locações -->
+        <section id="locacoes" class="tab-content">
+            <div class="section-header">
+                <h2>📦 Registrar Locação</h2>
+                <button id="novaLocacaoBtn" class="btn btn-primary">+ Nova Locação</button>
+            </div>
+
+            <!-- Form Nova Locação -->
+            <form id="formLocacao" class="form-modal hidden">
+                <div class="form-group">
+                    <label>Equipamento *</label>
+                    <select id="locEquipamento" required>
+                        <option value="">Selecione um equipamento...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Cliente *</label>
+                    <input type="text" id="locCliente" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Data de Saída *</label>
+                        <input type="date" id="locDataSaida" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Previsão de Devolução *</label>
+                        <input type="date" id="locDataDevolucao" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Quantidade *</label>
+                        <input type="number" id="locQuantidade" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone/Contato</label>
+                        <input type="tel" id="locContato">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Observações</label>
+                    <textarea id="locObservacoes" rows="3"></textarea>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Registrar Locação</button>
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('formLocacao').classList.add('hidden')">Cancelar</button>
+                </div>
+            </form>
+
+            <!-- Lista de Locações Ativas -->
+            <h3>Locações Ativas</h3>
+            <div id="locacoesAtivasList" class="locacoes-list"></div>
+        </section>
+
+        <!-- Histórico -->
+        <section id="historico" class="tab-content">
+            <div class="section-header">
+                <h2>📜 Histórico de Movimentações</h2>
+                <button id="exportarBtn" class="btn btn-secondary">📥 Exportar CSV</button>
+            </div>
+
+            <div class="filtros">
+                <input type="text" id="filtroHistorico" placeholder="Filtrar por equipamento, cliente...">
+                <select id="filtroTipo">
+                    <option value="">Todos os tipos</option>
+                    <option value="entrada">Entrada</option>
+                    <option value="saida">Saída</option>
+                    <option value="devolucao">Devolução</option>
+                    <option value="manutencao">Manutenção</option>
+                </select>
+            </div>
+
+            <div id="historicoList" class="historico-list"></div>
+        </section>
+
+        <!-- Manutenção -->
+        <section id="manutencao" class="tab-content">
+            <div class="section-header">
+                <h2>🔨 Controle de Manutenção</h2>
+                <button id="novaManutencaoBtn" class="btn btn-primary">+ Registrar Manutenção</button>
+            </div>
+
+            <!-- Form Nova Manutenção -->
+            <form id="formManutencao" class="form-modal hidden">
+                <div class="form-group">
+                    <label>Equipamento *</label>
+                    <select id="manuEquipamento" required>
+                        <option value="">Selecione um equipamento...</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Status *</label>
+                        <select id="manuStatus" required>
+                            <option value="manutencao">Em Manutenção</option>
+                            <option value="danificado">Danificado</option>
+                            <option value="reparo">Aguardando Reparo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Data *</label>
+                        <input type="date" id="manuData" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descrição do Problema *</label>
+                    <textarea id="manuDescricao" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Previsão de Disponibilidade</label>
+                    <input type="date" id="manuDataFim">
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('formManutencao').classList.add('hidden')">Cancelar</button>
+                </div>
+            </form>
+
+            <!-- Lista de Manutenções -->
+            <div id="manutencaoList" class="manutencao-list"></div>
+        </section>
     </div>
 
     <script src="app.js"></script>
